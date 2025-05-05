@@ -1,33 +1,4 @@
-import {
-  IsEmail,
-  IsEnum,
-  IsOptional,
-  IsString,
-  MaxLength,
-} from 'class-validator';
-import { AccessLevel, UserStatus } from '../user.entity';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateUserDto } from './create-user.dto';
 
-export class UpdateUserDto {
-  @IsOptional()
-  @IsString()
-  @MaxLength(45)
-  name?: string;
-
-  @IsOptional()
-  @IsEmail()
-  @MaxLength(45)
-  email?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(45)
-  password?: string;
-
-  @IsOptional()
-  @IsEnum(UserStatus)
-  status?: UserStatus;
-
-  @IsOptional()
-  @IsEnum(AccessLevel)
-  access_level?: AccessLevel;
-}
+export class UpdateUserDto extends PartialType(CreateUserDto) {}
