@@ -3,6 +3,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { IdentityModule } from './identity/identity.module';
+import { AddressModule } from './address/address.module';
+import { PatientModule } from './patient/patient.module';
+import { ConversationModule } from './conversation/conversation.module';
+import { ConversationUserModule } from './conversation-user/conversation-user.module';
+import { MessageModule } from './message/message.module';
+import { CheckinModule } from './checkin/checkin.module';
+import { EvolutionModule } from './evolution/evolution.module';
 
 @Module({
   imports: [
@@ -24,7 +31,14 @@ import { IdentityModule } from './identity/identity.module';
       }),
     }),
     UserModule,
+    PatientModule,
     IdentityModule,
+    AddressModule,
+    ConversationModule,
+    ConversationUserModule,
+    MessageModule,
+    CheckinModule,
+    EvolutionModule,
   ],
   controllers: [],
   providers: [],

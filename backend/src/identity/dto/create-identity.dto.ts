@@ -5,9 +5,14 @@ import {
   IsNumber,
   MaxLength,
   IsNotEmpty,
+  IsInt,
 } from 'class-validator';
 
 export class CreateIdentityDto {
+  @IsNotEmpty()
+  @IsInt()
+  patient_id: number;
+
   @IsNotEmpty()
   @IsString()
   @MaxLength(45)

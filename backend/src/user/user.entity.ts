@@ -1,4 +1,6 @@
 import * as bcrypt from 'bcrypt';
+import { ConversationUser } from 'src/conversation-user/conversation-user.entity';
+import { Message } from 'src/message/message.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,6 +9,7 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
+  OneToMany,
 } from 'typeorm';
 
 export enum UserStatus {
@@ -37,14 +40,12 @@ export class User {
   @Column({
     type: 'enum',
     enum: UserStatus,
-    default: UserStatus.ATIVO,
   })
   status: UserStatus;
 
   @Column({
     type: 'enum',
     enum: AccessLevel,
-    default: AccessLevel.CONVIDADO,
   })
   access_level: AccessLevel;
 
@@ -62,4 +63,10 @@ export class User {
       this.password = await bcrypt.hash(this.password, salt);
     }
   }
+
+  @OneToMany(() => ConversationUser, (cu) => cu.user)
+  conversations: ConversationUser[];
+
+  @OneToMany(() => Message, (msg) => msg.sender)
+  messages: Message[];
 }

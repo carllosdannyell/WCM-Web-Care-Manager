@@ -4,55 +4,43 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
+  ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { Patient } from '../patient/patient.entity';
 
-@Entity('identity')
-export class Identity {
+@Entity('address')
+export class Address {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Patient, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Patient, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'patient_id' })
   patient: Patient;
 
-  @Column({ length: 45, unique: true })
-  rg: string;
-
-  @Column({ length: 45, unique: true })
-  cpf: string;
-
-  @Column({ type: 'date' })
-  birthdate: Date;
-
-  @Column({ type: 'float', nullable: true })
-  weight?: number;
-
-  @Column({ type: 'float', nullable: true })
-  height?: number;
+  @Column({ length: 9, nullable: true })
+  cep?: string;
 
   @Column({ length: 45, nullable: true })
-  gender?: string;
+  street?: string;
+
+  @Column({ length: 10, nullable: true })
+  house_number?: string;
 
   @Column({ length: 45, nullable: true })
-  race?: string;
+  complement?: string;
 
   @Column({ length: 45, nullable: true })
-  marital_status?: string;
+  district?: string;
 
   @Column({ length: 45, nullable: true })
-  nationality?: string;
+  city?: string;
 
   @Column({ length: 45, nullable: true })
-  naturalness?: string;
+  uf?: string;
 
   @Column({ length: 45, nullable: true })
-  education?: string;
-
-  @Column({ length: 45, nullable: true })
-  profession?: string;
+  region?: string;
 
   @CreateDateColumn()
   created_at: Date;

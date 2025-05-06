@@ -2,6 +2,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
 } from 'class-validator';
@@ -20,14 +21,14 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(45)
+  @MaxLength(255)
   password: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(UserStatus)
-  status: UserStatus = UserStatus.ATIVO;
+  status?: UserStatus;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(AccessLevel)
-  access_level: AccessLevel = AccessLevel.CONVIDADO;
+  access_level?: AccessLevel;
 }

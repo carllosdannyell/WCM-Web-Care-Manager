@@ -6,14 +6,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  NotFoundException,
   Patch,
 } from '@nestjs/common';
 import { IdentityService } from './identity.service';
 import { CreateIdentityDto } from './dto/create-identity.dto';
 import { UpdateIdentityDto } from './dto/update-identity.dto';
 
-@Controller('identity')
+@Controller('identities')
 export class IdentityController {
   constructor(private readonly identityService: IdentityService) {}
 
@@ -29,9 +28,7 @@ export class IdentityController {
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    const identity = await this.identityService.findOne(id);
-    if (!identity) throw new NotFoundException('Identidade não encontrada');
-    return identity;
+    return this.identityService.findOne(id);
   }
 
   @Patch(':id')
