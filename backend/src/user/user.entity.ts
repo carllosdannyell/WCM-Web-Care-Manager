@@ -1,4 +1,3 @@
-import * as bcrypt from 'bcrypt';
 import { ConversationUser } from 'src/conversation-user/conversation-user.entity';
 import { Message } from 'src/message/message.entity';
 import {
@@ -7,8 +6,6 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  BeforeInsert,
-  BeforeUpdate,
   OneToMany,
 } from 'typeorm';
 
@@ -17,7 +14,7 @@ export enum UserStatus {
   INATIVO = 'Inativo',
 }
 
-export enum AccessLevel {
+export enum UserRole {
   ADMINISTRADOR = 'Administrador',
   PROFISSIONAL = 'Profissional',
   CONVIDADO = 'Convidado',
@@ -34,35 +31,28 @@ export class User {
   @Column({ length: 45, unique: true })
   email: string;
 
-  @Column({ length: 255, select: false })
+  @Column({ length: 255 })
   password: string;
 
   @Column({
     type: 'enum',
     enum: UserStatus,
+    default: UserStatus.ATIVO,
   })
   status: UserStatus;
 
   @Column({
     type: 'enum',
-    enum: AccessLevel,
+    enum: UserRole,
+    default: UserRole.PROFISSIONAL,
   })
-  access_level: AccessLevel;
+  role: UserRole;
 
   @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword(): Promise<void> {
-    if (this.password) {
-      const salt = await bcrypt.genSalt();
-      this.password = await bcrypt.hash(this.password, salt);
-    }
-  }
 
   @OneToMany(() => ConversationUser, (cu) => cu.user)
   conversations: ConversationUser[];

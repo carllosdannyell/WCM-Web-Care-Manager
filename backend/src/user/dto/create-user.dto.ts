@@ -6,7 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { AccessLevel, UserStatus } from '../user.entity';
+import { UserRole, UserStatus } from '../user.entity';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -29,6 +29,6 @@ export class CreateUserDto {
   status?: UserStatus;
 
   @IsOptional()
-  @IsEnum(AccessLevel)
-  access_level?: AccessLevel;
+  @IsEnum(UserRole)
+  role?: UserRole;
 }

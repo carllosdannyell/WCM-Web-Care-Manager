@@ -10,6 +10,7 @@ import { ConversationUserModule } from './conversation-user/conversation-user.mo
 import { MessageModule } from './message/message.module';
 import { CheckinModule } from './checkin/checkin.module';
 import { EvolutionModule } from './evolution/evolution.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { EvolutionModule } from './evolution/evolution.module';
     MessageModule,
     CheckinModule,
     EvolutionModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

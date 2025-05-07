@@ -1,0 +1,52 @@
+########## Cria um novo usuário administrador
+POST http://localhost:3000/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Carlos Daniel",
+  "email": "carlos@email.com",
+  "password": "123",
+  "role": "Administrador"
+}
+
+####### Logar usuários
+POST http://localhost:3000/auth/signin
+Content-Type: application/json
+
+{
+  "email": "carlos@email.com",
+  "password": "123"
+}
+
+############### users ################
+##### Buscar todos os usuários #####
+GET http://localhost:3000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IkNhcmxvcyBEYW5pZWwiLCJlbWFpbCI6ImRhbmllbDFAZW1haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJpYXQiOjE3NDY1ODMwNDYsImV4cCI6MTc0NjU4NDg0Nn0.zslkLciHTkPIg8hkTpVQ-t4cy9S6kJJhzEzxn2ULQbs
+
+##### Buscar um usuário pelo ID #####
+GET http://localhost:3000/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkNhcmxvcyBEYW5pZWwgSm92ZWxpbm8gUGVyZWlyYSBEb3MgU2FudG9zIiwiZW1haWwiOiJjYXJsb3NAZW1haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJpYXQiOjE3NDY1ODUxNjMsImV4cCI6MTc0NjU4Njk2M30.KTtc0878vfOsGlX7HVkhnj0xvrEUjeO3ZI1Vrx3eUXE
+
+##### Atualizar um usuário pelo ID #####
+PATCH http://localhost:3000/users/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IkNhcmxvcyBEYW5pZWwiLCJlbWFpbCI6ImRhbmllbDFAZW1haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJpYXQiOjE3NDY1ODMwNDYsImV4cCI6MTc0NjU4NDg0Nn0.zslkLciHTkPIg8hkTpVQ-t4cy9S6kJJhzEzxn2ULQbs
+
+{
+  "status": "Ativo"
+}
+
+##### Cria um novo usuário #####
+POST http://localhost:3000/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IkNhcmxvcyBEYW5pZWwiLCJlbWFpbCI6ImRhbmllbDFAZW1haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJpYXQiOjE3NDY1ODMwNDYsImV4cCI6MTc0NjU4NDg0Nn0.zslkLciHTkPIg8hkTpVQ-t4cy9S6kJJhzEzxn2ULQbs
+
+{
+  "name": "Henrique Matheus",
+  "email": "henrique@email.com",
+  "password": "123"
+}
+
+##### Cria um novo usuário #####
+DELETE http://localhost:3000/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkNhcmxvcyBEYW5pZWwgSm92ZWxpbm8gUGVyZWlyYSBEb3MgU2FudG9zIiwiZW1haWwiOiJjYXJsb3NAZW1haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJpYXQiOjE3NDY1ODUxNjMsImV4cCI6MTc0NjU4Njk2M30.KTtc0878vfOsGlX7HVkhnj0xvrEUjeO3ZI1Vrx3eUXE

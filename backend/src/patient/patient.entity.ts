@@ -39,6 +39,7 @@ export class Patient {
   @Column({
     type: 'enum',
     enum: PatientStatus,
+    default: PatientStatus.ATIVO,
   })
   status: PatientStatus;
 
