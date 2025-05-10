@@ -50,7 +50,7 @@ export class AuthService {
     return result;
   }
 
-  async signIn(email: string, password: string) {
+  async login(email: string, password: string) {
     email = email.trim().toLowerCase();
     const user = await this.userRepository.findOneBy({ email });
 

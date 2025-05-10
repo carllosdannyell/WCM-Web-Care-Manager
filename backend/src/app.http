@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ####### Logar usuários
-POST http://localhost:3000/auth/signin
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {

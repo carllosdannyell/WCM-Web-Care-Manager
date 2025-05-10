@@ -16,9 +16,9 @@ export class AuthController {
     return this.authService.signUp(dto);
   }
 
-  @Post('signin')
-  signIn(@Body() body: ICredencials) {
+  @Post('login')
+  login(@Body() body: ICredencials) {
     const { email, password } = body;
-    return this.authService.signIn(email, password);
+    return this.authService.login(email, password);
   }
 }
