@@ -20,7 +20,6 @@ export class LayoutComponent {
     const token = localStorage.getItem('token');
     if (!token) this.router.navigate(['/']);
     else {
-      // Decodificar e extrair nome de usuário se necessário
       const payload = JSON.parse(atob(token.split('.')[1]));
       this.username = payload.name || 'Administrador';
     }

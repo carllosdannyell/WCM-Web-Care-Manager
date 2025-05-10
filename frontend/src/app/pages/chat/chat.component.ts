@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { ChatService, User } from './chat.service';
 
 interface JwtPayload {
-  userId: number;
+  id: number;
 }
 
 @Component({
@@ -65,7 +65,7 @@ export class ChatComponent implements OnInit {
       const payload = jwtDecode<JwtPayload>(token);
       console.log(payload);
 
-      return payload.userId || 0;
+      return payload.id || 0;
     } catch (e) {
       console.error('Falha ao decodificar JWT:', e);
       return 0;

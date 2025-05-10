@@ -20,10 +20,8 @@ export class AuthGuard implements CanActivate {
     const token = this.authService.getToken();
 
     if (token) {
-      // O usuário está autenticado, permite o acesso à rota
       return true;
     } else {
-      // Redireciona para a página de login
       this.router.navigate(['/']);
       return false;
     }

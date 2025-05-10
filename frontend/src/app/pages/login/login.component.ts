@@ -29,7 +29,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Se o token já estiver salvo, redireciona para o dashboard
     if (typeof window !== 'undefined' && localStorage.getItem('token')) {
       this.router.navigate(['/dashboard']);
     }

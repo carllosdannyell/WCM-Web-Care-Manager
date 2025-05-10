@@ -119,7 +119,6 @@ export class PatientsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // também garanto parar de editar
     if (this.showEditModal && this.selectedPatient) {
       this.socket.emit('stop-editing', {
         patientId: this.selectedPatient.id,
@@ -150,7 +149,6 @@ export class PatientsComponent implements OnInit, OnDestroy {
       address: patient.address,
     };
     this.showEditModal = true;
-    // aviso ao servidor que estou editando este paciente
     this.socket.emit('start-editing', {
       patientId: patient.id,
       user: this.currentUser,
@@ -169,7 +167,6 @@ export class PatientsComponent implements OnInit, OnDestroy {
   }
 
   closeModals(): void {
-    // se eu estava editando, comunico que parei
     if (this.showEditModal && this.selectedPatient) {
       this.socket.emit('stop-editing', {
         patientId: this.selectedPatient.id,
@@ -177,7 +174,6 @@ export class PatientsComponent implements OnInit, OnDestroy {
       });
       this.counter -= 1;
     }
-    // resto do seu fechamento de modais…
     this.showViewModal =
       this.showEditModal =
       this.showCreateModal =

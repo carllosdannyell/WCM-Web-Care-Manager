@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
 
 export interface User {
   id: number;
@@ -34,11 +35,14 @@ export interface Message {
 export class ChatService {
   private apiUrl = 'http://localhost:3000';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private service: AuthService) {}
 
   /** 1) Lista todos os usuários */
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/users`);
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.service.getToken()}`,
+    });
+    return this.http.get<User[]>(`${this.apiUrl}/users`, { headers });
   }
 
   /** 2) Cria um chat vazio */

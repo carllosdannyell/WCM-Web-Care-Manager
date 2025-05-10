@@ -16,7 +16,6 @@ export class AppComponent implements OnInit {
   }
 
   private handleAuthRedirect(): void {
-    // Verifica se está no ambiente do navegador
     if (typeof window === 'undefined') return;
 
     const token = localStorage.getItem('token');

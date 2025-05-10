@@ -13,8 +13,6 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-// import { CurrentUser } from 'src/auth/current-user.decorator';
-// import { CurrentUserDto } from 'src/auth/current-user-dto';
 
 @Controller('users')
 export class UserController {
@@ -34,25 +32,25 @@ export class UserController {
   // }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: number) {
     return this.userService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   update(@Param('id') id: number, @Body() dto: UpdateUserDto) {
     return this.userService.update(+id, dto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);
   }
