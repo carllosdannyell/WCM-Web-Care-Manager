@@ -1,7 +1,7 @@
 /* --- Layout geral com Grid --- */
 .chat-container {
   position: absolute;
-  top: 64px;            /* altura da navbar fixa */
+  top: 64px; /* altura da navbar fixa */
   left: 0;
   right: 0;
   bottom: 0;
@@ -54,6 +54,7 @@
 .conversation {
   display: flex;
   flex-direction: column; /* Flexbox vertical */
+  min-height: 0; /* permite que os filhos encolham para scroll funcionar */
   background: #fff;
 }
 
@@ -68,6 +69,7 @@
 /* Lista de mensagens cresce e rola */
 .message-list {
   flex: 1 1 auto;
+  min-height: 0;
   padding: 1rem;
   overflow-y: auto;
   display: flex;
@@ -106,6 +108,7 @@
   border-radius: 4px;
 }
 
+/* Botão de enviar */
 .message-input button {
   padding: 0 1rem;
   border: none;
@@ -113,6 +116,18 @@
   background: #007acc;
   color: #fff;
   cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* Estado de hover só quando habilitado */
+.message-input button:hover:not(:disabled) {
+  background: #005fa3;
+}
+
+/* Estilo para botão desabilitado */
+.message-input button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 /* Estado vazio centralizado */
