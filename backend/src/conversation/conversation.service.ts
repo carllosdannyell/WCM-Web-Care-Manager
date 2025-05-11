@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   Injectable,
@@ -24,25 +25,56 @@ export class ConversationService {
     private readonly cuRepo: Repository<ConversationUser>,
   ) {}
 
-  async create(dto: CreateConversationDto): Promise<Conversation> {
-    const conversation = this.conversationRepo.create({
-      is_group: dto.is_group,
-      name: dto.name,
-    });
+  async create(dto: CreateConversationDto): Promise<Conversation | null> {
+    const { is_group, name, user_ids } = dto;
 
-    const saved = await this.conversationRepo.save(conversation);
+    // 1) Se for 1-a-1, tenta encontrar conversa existente
+    if (!is_group && user_ids.length === 2) {
+      // busca todas as associações de ambos
+      const existingCUs = await this.cuRepo.find({
+        where: { user: In(user_ids) },
+        relations: ['conversation'],
+      });
 
-    const users = await this.userRepo.findBy({ id: In(dto.user_ids) });
-
-    if (users.length !== dto.user_ids.length) {
-      throw new BadRequestException('Um ou mais usuários não encontrados');
+      // conta quantos participantes cada conversa tem em comum
+      const counts: Record<number, number> = {};
+      for (const cu of existingCUs) {
+        const cid = cu.conversation.id;
+        counts[cid] = (counts[cid] || 0) + 1;
+      }
+      const existingId = Number(
+        Object.entries(counts).find(([cid, cnt]) => cnt === 2)?.[0] ?? null,
+      );
+      if (existingId) {
+        // retorna já carregada
+        return this.conversationRepo.findOne({
+          where: { id: existingId },
+        });
+      }
     }
 
-    const participants = users.map((user) =>
-      this.cuRepo.create({ conversation: saved, user }),
-    );
+    // 2) Não achou: cria nova conversa
+    const convEntity = this.conversationRepo.create({
+      is_group,
+      name,
+    });
+    const saved = await this.conversationRepo.save(convEntity);
 
+    // valida usuários
+    const users = await this.userRepo.findBy({ id: In(user_ids) });
+    if (users.length !== user_ids.length) {
+      throw new BadRequestException('Algum usuário não encontrado');
+    }
+
+    // cria associações: passe apenas os IDs, não entidades completas
+    const participants = users.map((u) =>
+      this.cuRepo.create({
+        conversation: { id: saved.id }, // ← só precisa do id
+        user: { id: u.id }, // ← só precisa do id
+      }),
+    );
     await this.cuRepo.save(participants);
+
     return saved;
   }
 

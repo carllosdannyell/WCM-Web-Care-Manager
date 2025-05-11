@@ -22,7 +22,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(dto: CreateUserDto) {
+  async register(dto: CreateUserDto) {
     dto.name = dto.name.trim();
     dto.email = dto.email.trim().toLowerCase();
 

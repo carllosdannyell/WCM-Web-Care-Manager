@@ -11,9 +11,9 @@ export interface ICredencials {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signup')
-  signUp(@Body() dto: CreateUserDto) {
-    return this.authService.signUp(dto);
+  @Post('register')
+  register(@Body() dto: CreateUserDto) {
+    return this.authService.register(dto);
   }
 
   @Post('login')

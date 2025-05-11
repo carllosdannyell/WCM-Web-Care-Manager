@@ -1,14 +1,46 @@
-<div class="users-list">
-  <h2>Escolha um usuário:</h2>
-  <ul>
-    <li
-      *ngFor="let user of users"
-      (click)="startConversation(user)"
-      [class.loading]="loading"
-    >
-      <strong>{{ user.name }}</strong>
-      <small>({{ user.email }})</small>
-    </li>
-  </ul>
-  <div *ngIf="loading" class="spinner">Iniciando conversa…</div>
+<div class="chat-container">
+  <div class="user-list">
+    <h2>Conversas</h2>
+    <ul>
+      <li
+        *ngFor="let user of users"
+        (click)="startConversation(user)"
+        [class.loading]="loading"
+        [class.selected]="user === selectedUser"
+      >
+        <strong>{{ user.name }}</strong>
+      </li>
+    </ul>
+  </div>
+
+  <div class="conversation" *ngIf="selectedUser; else emptyState">
+    <div class="conversation-header">
+      <h3>{{ selectedUser.name }}</h3>
+    </div>
+
+    <div class="message-list">
+      <div
+        *ngFor="let msg of messages"
+        class="message"
+        [class.own]="msg.senderId === currentUserId"
+      >
+        {{ msg.content }}
+      </div>
+    </div>
+
+    <div class="message-input">
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        placeholder="Digite uma mensagem"
+      />
+      <button (click)="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <p>Selecione um usuário para iniciar a conversa</p>
+    </div>
+  </ng-template>
 </div>

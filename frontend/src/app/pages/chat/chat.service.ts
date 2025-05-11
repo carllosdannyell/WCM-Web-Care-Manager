@@ -1,5 +1,6 @@
+// src/app/services/chat.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
@@ -10,21 +11,21 @@ export interface User {
   email: string;
 }
 
-export interface Chat {
+export interface Conversation {
   id: number;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface ChatUser {
-  chatId: number;
+export interface ConversationUser {
+  conversationId: number;
   userId: number;
   joinedAt: string;
 }
 
 export interface Message {
   id: number;
-  chatId: number;
+  conversationId: number;
   senderId: number;
   content: string;
   sentAt: string;
@@ -35,89 +36,104 @@ export interface Message {
 export class ChatService {
   private apiUrl = 'http://localhost:3000';
 
-  constructor(private http: HttpClient, private service: AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   /** 1) Lista todos os usuários */
   getUsers(): Observable<User[]> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.service.getToken()}`,
-    });
-    return this.http.get<User[]>(`${this.apiUrl}/users`, { headers });
+    return this.http.get<User[]>(`${this.apiUrl}/users`);
   }
 
-  /** 2) Cria um chat vazio */
-  createChat(): Observable<Chat> {
-    return this.http.post<Chat>(`${this.apiUrl}/chats`, {});
-  }
-
-  /** 3) Associa usuário ao chat */
-  addChatUser(chatId: number, userId: number): Observable<ChatUser> {
-    return this.http.post<ChatUser>(`${this.apiUrl}/chat-users`, {
-      chatId,
-      userId,
+  /**
+   * 2) Cria uma conversa nova enviando já os participantes
+   *    conforme o seu CreateConversationDto (is_group + user_ids)
+   */
+  private createConversation(a: number, b: number): Observable<Conversation> {
+    return this.http.post<Conversation>(`${this.apiUrl}/conversations`, {
+      is_group: false,
+      user_ids: [a, b],
     });
   }
 
-  /** 4) Retorna todos os ChatUser de um usuário */
-  private getChatUsersForUser(userId: number): Observable<ChatUser[]> {
-    return this.http
-      .get<ChatUser[]>(`${this.apiUrl}/chat-users`)
-      .pipe(map((list) => list.filter((cu) => cu.userId === userId)));
+  /** 3) Busca todas as associações de conversa para um dado usuário */
+  private getConversationUsersForUser(
+    userId: number
+  ): Observable<ConversationUser[]> {
+    return this.http.get<ConversationUser[]>(
+      `${this.apiUrl}/conversation-user/user/${userId}`
+    );
   }
 
-  /** 5) Checa se já existe chat 1-a-1 entre dois usuários */
-  private checkChatExists(a: number, b: number): Observable<Chat | null> {
+  /**
+   * 4) Checa se já existe conversa privada entre A e B,
+   *    retornando a Conversation ou null.
+   */
+  private checkConversationExists(
+    a: number,
+    b: number
+  ): Observable<Conversation | null> {
     return forkJoin([
-      this.getChatUsersForUser(a),
-      this.getChatUsersForUser(b),
+      this.getConversationUsersForUser(a),
+      this.getConversationUsersForUser(b),
     ]).pipe(
       map(
-        ([la, lb]) =>
-          la
-            .map((cu) => cu.chatId)
-            .find((id) => lb.some((cu) => cu.chatId === id)) ?? null
+        ([listA, listB]) =>
+          // procura um conversationId em comum
+          listA
+            .map((cu) => cu.conversationId)
+            .find((id) => listB.some((cu2) => cu2.conversationId === id)) ??
+          null
       ),
-      switchMap((chatId) =>
-        chatId
-          ? this.http.get<Chat>(`${this.apiUrl}/chats/${chatId}`)
+      switchMap((convId) =>
+        convId
+          ? // se encontrou, busca detalhes da conversa
+            this.http.get<Conversation>(
+              `${this.apiUrl}/conversations/${convId}`
+            )
           : of(null)
       )
     );
   }
 
-  /** 6) Pega o chat existente ou cria um novo (e associa ambos) */
-  getOrCreateChat(a: number, b: number): Observable<Chat> {
-    return this.checkChatExists(a, b).pipe(
-      switchMap((chat) => {
-        if (chat) return of(chat);
-        return this.createChat().pipe(
-          switchMap((newChat) =>
-            forkJoin([
-              of(newChat),
-              this.addChatUser(newChat.id, a),
-              this.addChatUser(newChat.id, b),
-            ]).pipe(map(([c]) => c))
-          )
-        );
-      })
+  /**
+   * 5) Retorna a conversa existente ou cria uma nova (com participantes)
+   */
+  getOrCreateChat(a: number, b: number): Observable<Conversation> {
+    return this.checkConversationExists(a, b).pipe(
+      switchMap((conv) =>
+        conv
+          ? // já existe → emite direto
+            of(conv)
+          : // não existe → chama seu POST /conversations
+            this.createConversation(a, b)
+      )
     );
   }
 
-  /** 7) Busca mensagens de um chat */
-  getMessages(chatId: number): Observable<Message[]> {
-    return this.http.get<Message[]>(`${this.apiUrl}/messages?chatId=${chatId}`);
+  /**
+   * 6) Busca mensagens de uma conversa.
+   *    Passa o userId como query param para satisfazer o seu @Query('userId')
+   */
+  getMessages(conversationId: number): Observable<Message[]> {
+    const userId = this.authService.getCurrentUserId();
+    const params = new HttpParams().set('userId', userId.toString());
+    return this.http.get<Message[]>(
+      `${this.apiUrl}/messages/conversation/${conversationId}`,
+      { params }
+    );
   }
 
-  /** 8) Envia uma nova mensagem */
+  /**
+   * 7) Envia uma nova mensagem no formato esperado pelo CreateMessageDto
+   */
   sendMessage(
-    chatId: number,
+    conversationId: number,
     senderId: number,
     content: string
   ): Observable<Message> {
     return this.http.post<Message>(`${this.apiUrl}/messages`, {
-      chatId,
-      senderId,
-      content,
+      conversation_id: conversationId,
+      sender_id: senderId,
+      content: content,
     });
   }
 }

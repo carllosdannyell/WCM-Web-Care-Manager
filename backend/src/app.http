@@ -1,12 +1,12 @@
 ########## Cria um novo usuário administrador
-POST http://localhost:3000/auth/signup
+POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "name": "Carlos Daniel",
-  "email": "carlos@email.com",
+  "name": "Henrique Matheus",
+  "email": "henrique@email.com",
   "password": "123",
-  "role": "Administrador"
+  "role": "Profissional"
 }
 
 ####### Logar usuários
