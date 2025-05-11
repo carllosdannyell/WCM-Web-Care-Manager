@@ -79,7 +79,7 @@
 .message {
   max-width: 70%;
   padding: 0.5rem 0.75rem;
-  border-radius: 8px;
+  border-radius: 8px 8px 8px 0;
   background: #e0e0e0;
 }
 
@@ -87,6 +87,7 @@
 .message.own {
   align-self: flex-end;
   background: #d1ffd1;
+  border-radius: 8px 8px 0 8px;
 }
 
 /* Campo de input fixo embaixo */

@@ -25,11 +25,15 @@ export interface ConversationUser {
 
 export interface Message {
   id: number;
-  conversationId: number;
-  senderId: number;
   content: string;
   sentAt: string;
   isRead: boolean;
+  conversationId: number;
+  sender: {
+    id: number;
+    name: string;
+    email: string;
+  };
 }
 
 @Injectable({ providedIn: 'root' })

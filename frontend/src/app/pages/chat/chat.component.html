@@ -22,7 +22,7 @@
       <div
         *ngFor="let msg of messages"
         class="message"
-        [class.own]="msg.senderId === currentUserId"
+        [class.own]="msg.sender.id === currentUserId"
       >
         {{ msg.content }}
       </div>

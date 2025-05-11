@@ -37,6 +37,8 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUserId = this.getCurrentUserId();
+    console.log(this.getCurrentUserId());
+
     if (!this.currentUserId) {
       console.error('Não foi possível determinar o usuário atual!');
       return;
@@ -56,11 +58,12 @@ export class ChatComponent implements OnInit {
   startConversation(user: User): void {
     this.loading = true;
     this.chatService.getOrCreateChat(this.currentUserId, user.id).subscribe({
-      
       next: (chat: any) => {
         this.selectedUser = user;
         this.selectedChatId = chat.id;
         this.loadMessages(chat.id);
+        console.log(this.messages);
+
         this.loading = false;
       },
       error: (err) => {
@@ -72,7 +75,10 @@ export class ChatComponent implements OnInit {
 
   private loadMessages(chatId: number): void {
     this.chatService.getMessages(chatId).subscribe({
-      next: (msgs) => (this.messages = msgs),
+      next: (msgs) => {
+        console.log(msgs);
+        this.messages = msgs;
+      },
       error: (err) => console.error('Erro ao carregar mensagens:', err),
     });
   }
