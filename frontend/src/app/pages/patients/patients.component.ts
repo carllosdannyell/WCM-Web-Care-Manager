@@ -129,18 +129,15 @@ export class PatientsComponent implements OnInit, OnDestroy {
     this.socket.disconnect();
   }
 
-  loadPatients(): void {
-    this.patientService.getAll()
-      .pipe(
-        map(patients => patients.filter(p => p.status === 'Ativo'))
-      )
-      .subscribe(activePatients => {
-        this.patients = activePatients;
-      });
+  private loadPatients(): void {
+    this.patientService.getAll().subscribe((patients) => {
+      this.patients = patients;
+    });
+    
   }
 
   openViewModal(patient: Patient): void {
-    this.selectedPatient = { id: patient.id, ...this.formPatient };
+    this.selectedPatient = patient;
     this.showViewModal = true;
     console.log('this.patients', this.patients);
   }
