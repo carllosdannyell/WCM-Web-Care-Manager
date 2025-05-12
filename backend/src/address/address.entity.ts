@@ -4,8 +4,8 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Patient } from '../patient/patient.entity';
 
@@ -14,7 +14,9 @@ export class Address {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Patient, { onDelete: 'CASCADE' })
+  @OneToOne(() => Patient, (patient) => patient.identity, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'patient_id' })
   patient: Patient;
 

@@ -14,7 +14,9 @@ export class Identity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Patient, { onDelete: 'CASCADE' })
+  @OneToOne(() => Patient, (patient) => patient.identity, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'patient_id' })
   patient: Patient;
 

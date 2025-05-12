@@ -5,16 +5,18 @@
   </button>
 
   <div class="patient-list">
-    <div *ngFor="let patient of patients" class="patient-item">
-      <span>{{ patient.name }}</span>
-      <div class="actions">
-        <button (click)="openViewModal(patient)">👁️ Ver</button>
-        <button (click)="openEditModal(patient)">✏️ Editar</button>
-        <button class="delete" (click)="openDeleteModal(patient)">
-          🗑️ Excluir
-        </button>
+    <ng-container *ngFor="let patient of patients">
+      <div *ngIf="patient.status === 'Ativo'" class="patient-item">
+        <span>{{ patient.name }}</span>
+        <div class="actions">
+          <button (click)="openViewModal(patient)">👁️ Ver</button>
+          <button (click)="openEditModal(patient)">✏️ Editar</button>
+          <button class="delete" (click)="openDeleteModal(patient)">
+            🗑️ Excluir
+          </button>
+        </div>
       </div>
-    </div>
+    </ng-container>
   </div>
 
   <!-- View Modal -->
@@ -24,7 +26,6 @@
       <p><strong>Nome:</strong> {{ selectedPatient?.name }}</p>
       <p><strong>Email:</strong> {{ selectedPatient?.email }}</p>
       <p><strong>Telefone:</strong> {{ selectedPatient?.phone }}</p>
-      <p><strong>Endereço:</strong> {{ selectedPatient?.address }}</p>
       <div class="modal-actions">
         <button (click)="closeModals()">Fechar</button>
       </div>
@@ -40,16 +41,16 @@
         <input id="create-name" [(ngModel)]="newPatient.name" />
       </div>
       <div class="form-group">
+        <label for="create-social-name">Nome Social:</label>
+        <input id="create-social-name" [(ngModel)]="newPatient.social_name" />
+      </div>
+      <div class="form-group">
         <label for="create-email">Email:</label>
         <input id="create-email" [(ngModel)]="newPatient.email" />
       </div>
       <div class="form-group">
         <label for="create-phone">Telefone:</label>
         <input id="create-phone" [(ngModel)]="newPatient.phone" />
-      </div>
-      <div class="form-group">
-        <label for="create-address">Endereço:</label>
-        <input id="create-address" [(ngModel)]="newPatient.address" />
       </div>
       <div class="modal-actions">
         <button (click)="createPatient()">Salvar</button>
@@ -107,20 +108,6 @@
         />
         <small *ngIf="isFieldLocked('phone', 'edit')"
           >Editando: {{ getLocker("phone", "edit") }}</small
-        >
-      </div>
-      <div class="form-group">
-        <label for="edit-address">Endereço:</label>
-        <input
-          id="edit-address"
-          [(ngModel)]="formPatient.address"
-          (focus)="onFocus('address', 'edit')"
-          (blur)="onBlur('address', 'edit')"
-          (input)="onInput('address', formPatient.address, 'edit')"
-          [disabled]="isFieldLocked('address', 'edit')"
-        />
-        <small *ngIf="isFieldLocked('address', 'edit')"
-          >Editando: {{ getLocker("address", "edit") }}</small
         >
       </div>
       <div class="modal-actions">

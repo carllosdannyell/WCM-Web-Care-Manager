@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 export enum PatientStatus {
@@ -14,15 +15,13 @@ export enum PatientStatus {
 }
 
 import { User } from '../user/user.entity';
+import { Identity } from 'src/identity/identity.entity';
+import { Address } from 'src/address/address.entity';
 
 @Entity('patient')
 export class Patient {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
 
   @Column({ length: 255 })
   name: string;
@@ -48,4 +47,20 @@ export class Patient {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToOne(() => Identity, (identity) => identity.patient, {
+    cascade: true,
+    eager: false,
+  })
+  identity: Identity;
+
+  @OneToOne(() => Address, (address) => address.patient, {
+    cascade: true,
+    eager: false,
+  })
+  address: Address;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

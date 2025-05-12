@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PatientService, Patient } from './patient.service';
 import { io, Socket } from 'socket.io-client';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-patients',
@@ -25,18 +26,17 @@ export class PatientsComponent implements OnInit, OnDestroy {
   showCreateModal: boolean = false;
   showDeleteModal: boolean = false;
   selectedPatient: Patient | null = null;
-  formPatient: Omit<Patient, 'id' | 'created_at' | 'updated_at' | 'expanded'> =
-    {
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-    };
-  newPatient: Omit<Patient, 'id' | 'created_at' | 'updated_at' | 'expanded'> = {
+  formPatient = {
     name: '',
+    social_name: '',
     email: '',
     phone: '',
-    address: '',
+  };
+  newPatient = {
+    name: '',
+    social_name: '',
+    email: '',
+    phone: '',
   };
 
   socket!: Socket;
@@ -130,23 +130,28 @@ export class PatientsComponent implements OnInit, OnDestroy {
   }
 
   loadPatients(): void {
-    this.patientService.getAll().subscribe((data) => {
-      this.patients = data;
-    });
+    this.patientService.getAll()
+      .pipe(
+        map(patients => patients.filter(p => p.status === 'Ativo'))
+      )
+      .subscribe(activePatients => {
+        this.patients = activePatients;
+      });
   }
 
   openViewModal(patient: Patient): void {
     this.selectedPatient = { id: patient.id, ...this.formPatient };
     this.showViewModal = true;
+    console.log('this.patients', this.patients);
   }
 
   openEditModal(patient: Patient): void {
     this.selectedPatient = patient;
     this.formPatient = {
       name: patient.name,
+      social_name: patient.name,
       email: patient.email,
       phone: patient.phone,
-      address: patient.address,
     };
     this.showEditModal = true;
     this.socket.emit('start-editing', {
@@ -157,7 +162,12 @@ export class PatientsComponent implements OnInit, OnDestroy {
 
   openCreateForm(): void {
     this.selectedPatient = null;
-    this.newPatient = { name: '', email: '', phone: '', address: '' };
+    this.newPatient = {
+      name: '',
+      social_name: '',
+      email: '',
+      phone: '',
+    };
     this.showCreateModal = true;
   }
 
@@ -187,8 +197,7 @@ export class PatientsComponent implements OnInit, OnDestroy {
     if (
       !this.newPatient.name ||
       !this.newPatient.email ||
-      !this.newPatient.phone ||
-      !this.newPatient.address
+      !this.newPatient.phone
     ) {
       alert('Por favor, preencha todos os campos.');
       return;
@@ -205,8 +214,7 @@ export class PatientsComponent implements OnInit, OnDestroy {
     if (
       !this.formPatient.name ||
       !this.formPatient.email ||
-      !this.formPatient.phone ||
-      !this.formPatient.address
+      !this.formPatient.phone
     ) {
       alert('Por favor, preencha todos os campos.');
       return;

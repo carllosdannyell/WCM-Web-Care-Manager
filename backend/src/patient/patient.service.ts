@@ -36,14 +36,14 @@ export class PatientService {
 
   findAll(): Promise<Patient[]> {
     return this.patientRepository.find({
-      relations: ['user'],
+      relations: ['identity', 'address', 'user'],
     });
   }
 
   async findOne(id: number): Promise<Patient | null> {
     const patient = await this.patientRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['identity', 'address', 'user'],
     });
     if (!patient) {
       throw new NotFoundException(`Paciente com id ${id} não encontrado`);
@@ -54,7 +54,7 @@ export class PatientService {
   async update(id: number, updatePatientDto: UpdatePatientDto) {
     const patient = await this.patientRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['identity', 'address', 'user'],
     });
 
     if (!patient) {
