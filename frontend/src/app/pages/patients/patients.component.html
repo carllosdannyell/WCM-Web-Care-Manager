@@ -69,50 +69,61 @@
         {{ counter > 1 ? "pessoas estão" : "pessoa está" }}
         editando este paciente.
       </div>
+      <div
+        *ngIf="isFormLocked && currentUser === lockedBy"
+        class="success-notice"
+      >
+        VOCÊ ESTÁ EDITANDO ESSE PACIENTE
+      </div>
+      <div
+        *ngIf="isFormLocked && currentUser !== lockedBy"
+        class="success-notice"
+      >
+        OUTRA PESSOA ESTÁ EDITANDO ESSE PACIENTE
+      </div>
       <div class="form-group">
         <label for="edit-name">Nome:</label>
         <input
+          [ngClass]="isFormLocked && currentUser === lockedBy ? 'own' : 'other'"
           id="edit-name"
           [(ngModel)]="formPatient.name"
           (focus)="onFocus('name', 'edit')"
           (blur)="onBlur('name', 'edit')"
           (input)="onInput('name', formPatient.name, 'edit')"
-          [disabled]="isFieldLocked('name', 'edit')"
+          [disabled]="isFormLocked && currentUser !== lockedBy"
         />
-        <small *ngIf="isFieldLocked('name', 'edit')"
-          >Editando: {{ getLocker("name", "edit") }}</small
-        >
       </div>
       <div class="form-group">
         <label for="edit-email">Email:</label>
         <input
+          [ngClass]="isFormLocked && currentUser !== lockedBy ? 'yellow' : ''"
           id="edit-email"
           [(ngModel)]="formPatient.email"
           (focus)="onFocus('email', 'edit')"
           (blur)="onBlur('email', 'edit')"
           (input)="onInput('email', formPatient.email, 'edit')"
-          [disabled]="isFieldLocked('email', 'edit')"
+          [disabled]="isFormLocked && currentUser !== lockedBy"
         />
-        <small *ngIf="isFieldLocked('email', 'edit')"
-          >Editando: {{ getLocker("email", "edit") }}</small
-        >
       </div>
       <div class="form-group">
         <label for="edit-phone">Telefone:</label>
         <input
+          [ngClass]="isFormLocked && currentUser === lockedBy ? 'own' : 'other'"
           id="edit-phone"
           [(ngModel)]="formPatient.phone"
           (focus)="onFocus('phone', 'edit')"
           (blur)="onBlur('phone', 'edit')"
           (input)="onInput('phone', formPatient.phone, 'edit')"
-          [disabled]="isFieldLocked('phone', 'edit')"
+          [disabled]="isFormLocked && currentUser !== lockedBy"
         />
-        <small *ngIf="isFieldLocked('phone', 'edit')"
-          >Editando: {{ getLocker("phone", "edit") }}</small
-        >
       </div>
       <div class="modal-actions">
-        <button (click)="savePatient()">Salvar</button>
+        <button
+          [disabled]="isFormLocked && currentUser !== lockedBy"
+          (click)="savePatient()"
+        >
+          Salvar
+        </button>
         <button (click)="closeModals()">Cancelar</button>
       </div>
     </div>

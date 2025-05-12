@@ -21,6 +21,12 @@ import { map } from 'rxjs';
 })
 export class PatientsComponent implements OnInit, OnDestroy {
   patients: Patient[] = [];
+  isFormLocked: boolean = false;
+  lockedBy = '';
+  currentUser: string = '';
+  counter: number = -2;
+  currentEditingField = '';
+  editorMessage = '';
   showViewModal: boolean = false;
   showEditModal: boolean = false;
   showCreateModal: boolean = false;
@@ -46,8 +52,6 @@ export class PatientsComponent implements OnInit, OnDestroy {
     phone: {},
     address: {},
   };
-  currentUser: string = '';
-  counter: number = -2;
 
   constructor(
     private patientService: PatientService,
@@ -79,6 +83,9 @@ export class PatientsComponent implements OnInit, OnDestroy {
         if (this.showEditModal && this.selectedPatient?.id === pid) {
           this.counter = payload.count;
         }
+
+        this.isFormLocked = false;
+        this.lockedBy = '';
       }
     );
 
@@ -86,6 +93,11 @@ export class PatientsComponent implements OnInit, OnDestroy {
       if (user !== this.currentUser) {
         this.fieldLocks[field][context] = user;
       }
+    });
+
+    this.socket.on('field-locked', ({ field, user, context }) => {
+      this.isFormLocked = true;
+      this.lockedBy = user;
     });
 
     this.socket.on('patient-deleted', (data) => {
@@ -133,7 +145,6 @@ export class PatientsComponent implements OnInit, OnDestroy {
     this.patientService.getAll().subscribe((patients) => {
       this.patients = patients;
     });
-    
   }
 
   openViewModal(patient: Patient): void {
@@ -252,6 +263,9 @@ export class PatientsComponent implements OnInit, OnDestroy {
   }
 
   onInput(field: string, value: string, context: 'create' | 'edit'): void {
+    console.log(this.formPatient);
+    console.log(this.selectedPatient);
+    
     this.socket.emit('update-field', {
       field,
       value,

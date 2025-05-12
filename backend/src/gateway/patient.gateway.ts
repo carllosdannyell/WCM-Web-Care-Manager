@@ -95,11 +95,15 @@ export class PatientsGateway
     },
   ) {
     const contextMap = this.fieldLocks.get(data.field);
+    console.log('aaaaaaaaa', data);
+
     if (contextMap && !contextMap.has(data.context)) {
       contextMap.set(data.context, data.user);
       this.logger.log(
         `Field locked: ${data.field} (${data.context}) by ${data.user}`,
       );
+      console.log(data);
+
       this.server.emit('field-locked', data);
     }
   }
