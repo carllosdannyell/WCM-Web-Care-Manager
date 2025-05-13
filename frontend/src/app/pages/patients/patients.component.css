@@ -101,6 +101,7 @@
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  outline: none;
 }
 
 .form-group input:disabled {
@@ -172,4 +173,32 @@
   border-radius: 4px;
   font-weight: bold;
   margin-bottom: 1rem;
+}
+
+/* quem está editando — borda e fundo verde claro */
+input.own {
+  border: 2px solid #28a745;
+  background-color: #e6f4ea;
+}
+
+/* quem não está editando — borda cinza e opacidade */
+input.other {
+  border: 2px solid #ccc;
+  background-color: #f9f9f9;
+  opacity: 0.6;
+}
+
+/* mantendo layout geral */
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.yellow {
+  background-color: #ffeeba !important; /* amarelo claro */
+  border-color: #f0ad4e !important; /* laranja escuro */
+  color: #856404 !important; /* texto marrom escuro */
+  opacity: 1 !important; /* mantém opacidade total */
 }

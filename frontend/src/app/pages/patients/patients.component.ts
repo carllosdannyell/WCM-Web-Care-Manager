@@ -78,7 +78,7 @@ export class PatientsComponent implements OnInit, OnDestroy {
     this.socket.on(
       'editing-count',
       (payload: { patientId: string; count: number; users: string[] }) => {
-        const pid = Number(payload.patientId); // agora é number
+        const pid = Number(payload.patientId);
 
         if (this.showEditModal && this.selectedPatient?.id === pid) {
           this.counter = payload.count;
@@ -123,6 +123,8 @@ export class PatientsComponent implements OnInit, OnDestroy {
       if (index !== -1) {
         this.patients[index] = { ...updatedPatient };
       }
+      this.isFormLocked = false;
+      this.lockedBy = '';
     });
 
     this.socket.on('patient-created', (newPatient: Patient) => {
@@ -265,7 +267,7 @@ export class PatientsComponent implements OnInit, OnDestroy {
   onInput(field: string, value: string, context: 'create' | 'edit'): void {
     console.log(this.formPatient);
     console.log(this.selectedPatient);
-    
+
     this.socket.emit('update-field', {
       field,
       value,

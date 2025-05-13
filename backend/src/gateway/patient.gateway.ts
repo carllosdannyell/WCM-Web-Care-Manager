@@ -31,7 +31,10 @@ export class PatientsGateway
 
   private logger: Logger = new Logger('PatientsGateway');
 
+  private currentEditor: Map<string, string> = new Map();
   private editingUsers: Map<string, Set<string>> = new Map();
+  private formStates: Map<string, Record<string, any>> = new Map();
+  private focusedFields: Map<string, string> = new Map();
 
   afterInit(_server: Server) {
     this.logger.log('WebSocket Gateway initialized');
