@@ -6,11 +6,12 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { jwtDecode } from 'jwt-decode';
 import { ChatService, User, Message } from './chat.service';
+import { io, Socket } from 'socket.io-client';
 
 interface JwtPayload {
   id: number;
@@ -26,22 +27,38 @@ interface JwtPayload {
 export class ChatComponent implements OnInit, AfterViewChecked {
   @ViewChild('messageList', { static: false })
   private messageList?: ElementRef<HTMLDivElement>;
+  socket!: Socket;
 
   users: User[] = [];
   loading = false;
   currentUserId = 0;
 
   selectedUser: User | null = null;
-  selectedChatId: number | null = null;
+  selectedChatId!: number;
   messages: Message[] = [];
   newMessage = '';
 
   /** flag que indica quando devemos rolar para o fim */
   private shouldScroll = false;
 
-  constructor(private chatService: ChatService, private router: Router) {}
+  constructor(
+    private chatService: ChatService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
+    this.socket = io('http://localhost:3000', {
+      transports: ['websocket'],
+    });
+
+    this.socket.on('new-message', (message) => {
+      this.messages.push(message);
+    });
+
+    this.selectedChatId = +this.route.snapshot.paramMap.get('id')!;
+
+    this.loadMessages(this.selectedChatId);
+
     this.currentUserId = this.getCurrentUserId();
     if (!this.currentUserId) {
       console.error('Não foi possível determinar o usuário atual!');
@@ -84,13 +101,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   private loadMessages(chatId: number): void {
-    this.chatService.getMessages(chatId).subscribe({
-      next: (msgs) => {
-        this.messages = msgs;
-        // marca para rolar só uma vez, após a view ser atualizada
-        this.shouldScroll = true;
-      },
-      error: (err) => console.error('Erro ao carregar mensagens:', err),
+    this.chatService.getMessages(chatId).subscribe((data) => {
+      this.messages = data;
+      this.shouldScroll = true;
     });
   }
 
@@ -101,14 +114,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     const content = this.newMessage.trim();
     this.chatService
       .sendMessage(this.selectedChatId, this.currentUserId, content)
-      .subscribe({
-        next: (msg) => {
-          this.messages.push(msg);
-          this.newMessage = '';
-          // sinaliza para rolar após o Angular renderizar
-          this.shouldScroll = true;
-        },
-        error: (err) => console.error('Erro ao enviar mensagem:', err),
+      .subscribe((msg) => {
+        this.loadMessages(this.selectedChatId as number);
+        this.newMessage = '';
+        this.shouldScroll = true;
+        this.socket.emit('new-message', msg);
       });
   }
 
@@ -116,7 +126,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     if (!this.messageList) {
       return;
     }
-    // espera um tick para garantir que o DOM já foi atualizado
     setTimeout(() => {
       try {
         const el = this.messageList!.nativeElement;

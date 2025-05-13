@@ -6,12 +6,13 @@ import { Conversation } from '../conversation/conversation.entity';
 import { MessageService } from './message.service';
 import { MessageController } from './message.controller';
 import { ConversationUser } from 'src/conversation-user/conversation-user.entity';
+import { MessageGateway } from 'src/gateway/message.gateway';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Message, User, Conversation, ConversationUser]),
   ],
-  providers: [MessageService],
+  providers: [MessageService, MessageGateway],
   controllers: [MessageController],
 })
 export class MessageModule {}
