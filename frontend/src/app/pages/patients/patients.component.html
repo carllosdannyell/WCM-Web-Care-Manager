@@ -98,11 +98,7 @@
         <label for="edit-email">Email:</label>
         <input
           class="form-control"
-          [ngClass]="
-            formPatient.email !== selectedPatient?.email && showEditModal
-              ? 'yellow'
-              : ''
-          "
+          [ngClass]="formPatient.email === selectedPatient?.email ? '' : 'yellow'"
           id="edit-email"
           [(ngModel)]="formPatient.email"
           (focus)="onFocus('email', 'edit')"
@@ -115,9 +111,7 @@
         <label for="edit-phone">Telefone:</label>
         <input
           class="form-control"
-          [ngClass]="
-            (formPatient.phone === selectedPatient?.phone) && (isFormLocked && currentUser !== lockedBy) ? '' : 'yellow'
-          "
+          [ngClass]="formPatient.phone === selectedPatient?.phone ? '' : 'yellow'"
           id="edit-phone"
           [(ngModel)]="formPatient.phone"
           (focus)="onFocus('phone', 'edit')"
